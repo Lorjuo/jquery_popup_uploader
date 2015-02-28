@@ -7,4 +7,4 @@ module PopupJqueryUploader
   # Your code goes here...
 end
 
-SimpleForm::Inputs::Base.send(:include, PopupJqueryUploader::Inputs)
+SimpleForm::Inputs.send(:include, PopupJqueryUploader::Inputs)
