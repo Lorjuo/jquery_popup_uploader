@@ -20,4 +20,9 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
+
+  s.add_dependency "rails", ">= 4.0.0"
+
+  s.add_dependency "simple_form", "~> 3.1"
+  s.add_dependency "carrierwave"
 end
