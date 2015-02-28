@@ -1,0 +1,47 @@
+<%
+=begin %>
+
+
+Parameters:
+object          : describes the model instance, this partial is working on (e.g. a User object, or a special image-object attached to a user object)
+
+attribute_name  : the attribute that is mounted by carrierwave - describes the file path (e.g. image or file)
+
+version         : carrierwave version (thumb, portrait, ...)
+
+use_default_url : boolean that specifies wheather the default image should be displayed if no image is available (otherwise dísplay nothing)
+
+
+<%
+=end %>
+
+
+<%= template.content_tag :div, class: 'popup-upload-field' do %>
+  <%= if object.send("#{attribute_name}?") || use_default_url %>
+    <% url = object.send(attribute_name).tap {|o| break o.send(version) if version}.send('url') %>
+    <%= link_to(url, :class => 'fancybox', :caption => object.name) do %>
+      <%= image_tag(url, size: "260x180") %>
+    <% end %>
+  <% end %>
+<% end %>
+
+
+<%# Modal %>
+<%# For passing data: http://stackoverflow.com/questions/24323895/send-parameter-to-bootstrap-modal-window %>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h4 class="modal-title">I18N: Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">I18N: Close</button>
+        <button type="button" class="btn btn-primary">I18N: Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>

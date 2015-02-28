@@ -8,7 +8,7 @@ module PopupJqueryUploader::Inputs
       if object.send("#{attribute_name}?") || use_default_url
         out << template.image_tag(object.send(attribute_name).tap {|o| break o.send(version) if version}.send('url'))
       end
-      (out << super).html_safe
+      (out << super).html_safe # calls method 'input' on superclass
     end
   end
 end
