@@ -16,11 +16,13 @@ use_default_url : boolean that specifies wheather the default image should be di
 =end %>
 
 
-<%= template.content_tag :div, class: 'popup-upload-field' do %>
-  <%= if object.send("#{attribute_name}?") || use_default_url %>
-    <% url = object.send(attribute_name).tap {|o| break o.send(version) if version}.send('url') %>
+<%= content_tag :div, class: 'popup-upload-field' do %>
+<%# debugger %>
+  <% if object.send("#{options[:mount_on]}?") || options[:use_default_url] %>
+    <% preview_url = object.send(options[:mount_on]).tap {|o| break o.send(options[:preview_version]) if options[:preview_version]}.send('url') %>
+    <% url = object.send(options[:mount_on]).send('url') %>
     <%= link_to(url, :class => 'fancybox', :caption => object.name) do %>
-      <%= image_tag(url, size: "260x180") %>
+      <%= image_tag(preview_url, size: options[:preview_size]) %>
     <% end %>
   <% end %>
 <% end %>
