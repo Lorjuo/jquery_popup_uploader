@@ -18,7 +18,7 @@ module PopupJqueryUploader::Inputs
       opts = default_options.merge(options) # needs to assign output of merging to a variable that is not called "options"
 
       template.content_tag :div, class: 'input-group' do
-        debugger
+        #debugger
         input = @builder.hidden_field(attribute_name, merged_input_options)
         
         ac = ActionController::Base.new()

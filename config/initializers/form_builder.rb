@@ -1,4 +1,5 @@
 # stackoverflow.com/a/4820814/871495
+# http://blog.chrisblunt.com/rails-getting-the-id-of-form-fields-inside-a-fields_for-block/
 
 class FormBuilder < ActionView::Helpers::FormBuilder
   def id_for(method, options = {})
