@@ -1,4 +1,4 @@
-module PopupJqueryUploader::Inputs
+module JqueryPopupUploader::Inputs
   class ImagePopupUploadInput < SimpleForm::Inputs::Base
 
     def input(wrapper_options=nil)
@@ -63,7 +63,7 @@ end
     #   template.content_tag :div, class: 'input-group' do
         
     #     ac = ActionController::Base.new()
-    #     ac.render_to_string :partial => "popup_jquery_uploader/field",
+    #     ac.render_to_string :partial => "jquery_popup_uploader/field",
     #       :locals => {
     #         :builder => @builder,
     #         :options => input_options,

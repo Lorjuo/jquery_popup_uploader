@@ -1,4 +1,4 @@
-module PopupJqueryUploader::Inputs
+module JqueryPopupUploader::Inputs
   class ImagePreviewInput < SimpleForm::Inputs::FileInput
     def input(wrapper_options=nil)
       version = input_html_options.delete(:preview_version)

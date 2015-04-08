@@ -1,4 +1,4 @@
-# PopupJqueryUploader
+# JqueryPopupUploader
 
 TODO: Write a gem description
 
@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'popup_jquery_uploader'
+    gem 'jquery_popup_uploader'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install popup_jquery_uploader
+    $ gem install jquery_popup_uploader
 
 ## Usage
 
@@ -22,7 +22,7 @@ TODO: Write usage instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/popup_jquery_uploader/fork )
+1. Fork it ( https://github.com/[my-github-username]/jquery_popup_uploader/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

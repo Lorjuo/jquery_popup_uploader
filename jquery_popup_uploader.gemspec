@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'popup_jquery_uploader/version'
+require 'jquery_popup_uploader/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "popup_jquery_uploader"
-  spec.version       = PopupJqueryUploader::VERSION
+  spec.name          = "jquery_popup_uploader"
+  spec.version       = JqueryPopupUploader::VERSION
   spec.authors       = ["Julien Seitz"]
   spec.email         = ["julien.seitz@gmail.com"]
   spec.summary       = %q{Gem that provides simple_form input file upload via popup based jquery/carrierwave mechanism}

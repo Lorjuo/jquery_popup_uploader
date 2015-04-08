@@ -1,4 +1,4 @@
-module PopupJqueryUploader::Inputs
+module JqueryPopupUploader::Inputs
   class AttachmentPreviewInput < SimpleForm::Inputs::FileInput
     def input(wrapper_options=nil)
       out = ''
