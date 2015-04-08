@@ -16,6 +16,17 @@ use_default_url : boolean that specifies wheather the default image should be di
 =end %>
 
 
+
+
+
+
+
+
+
+<!-- Hidden input field that stores the id of the current image object -->
+<%= builder.hidden_field(attribute_name, html_options) %>
+
+
 <%= content_tag :div, class: 'popup-upload-field' do %>
 <%# debugger %>
   <% if object.send("#{options[:mount_on]}?") || options[:use_default_url] %>
@@ -28,7 +39,7 @@ use_default_url : boolean that specifies wheather the default image should be di
 <% end %>
 
 
-<%#= object.id_for(:file) %>
+<%= full_html_id %>
 
 <%# Modal %>
 <%# For passing data: http://stackoverflow.com/questions/24323895/send-parameter-to-bootstrap-modal-window %>
