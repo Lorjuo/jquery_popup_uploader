@@ -3,7 +3,10 @@ module JqueryPopupUploader::Inputs
 
     def input(wrapper_options=nil)
       #options array gets filled by wrappers: simple_form/wrappers/many.rb
-
+      
+      #action_controller = ActionController::Base.new()
+      #https://github.com/rails/jbuilder/issues/227
+      view = ApplicationController.new.view_context
 
 
       # HTML options id etc
@@ -32,10 +35,12 @@ module JqueryPopupUploader::Inputs
             template.image_tag(preview_url, size: options[:preview_size])
           end) +
           (template.content_tag :div, class: 'buttons' do
-            template.button_tag('replace', type: 'button', class: "btn btn-primary") +
-            template.button_tag('delete', type: 'button', class: "btn btn-primary")
+            template.button_tag('replace', type: 'button', class: "btn btn-primary jpu-replace") +
+            template.button_tag('delete', type: 'button', class: "btn btn-primary jpu-delete")
           end)
-        end)
+        end) +
+        #(action_controller.render_to_string :partial => "jquery_popup_uploader/modal")
+        (view.render(partial: "jquery_popup_uploader/modal"))
       end
     end
 

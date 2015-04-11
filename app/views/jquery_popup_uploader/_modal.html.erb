@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="myModalLabel">Modal title</h4>
       </div>
       <div class="modal-body">
-        ...
+        <%= render :partial => 'jquery_popup_uploader/modal_form', :locals => {:image => Image.new} %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

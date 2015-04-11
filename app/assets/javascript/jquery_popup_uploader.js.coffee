@@ -28,10 +28,95 @@ do ($ = jQuery, window, document) ->
       # Place initialization logic here
       # You already have access to the DOM element and the options via the instance,
       # e.g., @element and @settings
-      console.log "xD"
+      @initCallbacks()
+      @initFileupload()
+      console.log "[image_popup_upload] plugin loaded"
+    
+    initCallbacks: ->
+      plugin = this
+      $(@element).find('.jpu-replace').on "click", ->
+        console.log("replace button clicked")
+        plugin.openModal()
 
-    yourOtherFunction: ->
-      # some logic
+    initFileupload: ->
+      $(@element).find('.jpu-fileupload').fileupload
+
+        # Automatically start upload when files have been selected
+        autoUpload: true
+
+        # Use ajax via javascript instead of json return
+        dataType: "script"
+
+        # Disable Iframe transport because this is only a hack for IE < version 10 that doesn't support XmlHttpRequests
+        # IframeTransport will be automatically used if normal way fails
+        forceIframeTransport: false
+
+        # Processing image on client side
+        loadImageMaxFileSize: 25000000 # 25MB
+        imageMaxWidth: 800
+        imageMaxHeight: 800
+        disableImageResize: false
+        process:[
+          {
+            action: 'load',
+            fileTypes: /^image\/(gif|jpeg|png)$/,
+            maxFileSize: 25000000 # 25MB
+          },
+          {
+            action: 'resize',
+            maxWidth: 800,
+            maxHeight: 800#,
+            #minWidth: 480,
+            #minHeight: 360
+          },
+          {
+            action: 'save'
+          }
+        ]
+
+        add: (e, data) ->
+          if (data.files && data.files[0])
+            file = data.files[0]
+            if(file.size < 25000000)
+              if(file.type.substr(0, file.type.indexOf('/')) != 'image')
+                alert("Please upload a file with the correct format")
+              else
+                current_data = $(this)
+                data.process(->
+                  return current_data.fileupload('process', data); #call the process function
+                ).done(->
+                  data.context = $($.parseHTML(tmpl("template-upload-popup", file)))
+                  $('.fileupload').append(data.context)
+                  xhr = data.submit();
+                  data.context.data('data',{jqXHR: xhr});
+                )
+            else
+              alert("one of your files is over 25MB")
+        
+        progress: (e, data) ->
+          if data.context
+            progress = parseInt(data.loaded / data.total * 100, 10)
+            data.context.find('.progress-bar').css('width', progress + '%')
+        
+        done: (e, data) ->
+          data.context.find('.progress-bar').addClass('progress-bar-success')
+          data.context.find('.progress').removeClass('progress-striped active')
+          setTimeout (->
+            data.context.hide()
+          ), 3000
+
+        always: (e, data) ->
+          data.context.find('.progress').removeClass('progress-striped active')
+          data.context.find('.progress-bar').css('width', 100 + '%')
+        
+        fail: (e, data) ->
+          data.context.find('.progress-bar').addClass('progress-bar-danger')
+          alert("#{data.files[0].name} failed to upload.")
+          console.log("Upload failed:")
+          console.log(data)
+
+    openModal: ->
+      $(@element).find('.modal').modal()
 
   # A really lightweight plugin wrapper around the constructor,
   # preventing against multiple instantiations

@@ -1,0 +1,16 @@
+<form method="post" action="/images/new" enctype="multipart/form-data" multipart="false" class="jpu-fileupload">
+<%#= form_for Image.new, :html => { :class => "fileupload", :multipart => true } do |f| %>
+<%#= form_for Image.new do |f| %>
+<%#= form_for new_image_path do |f| %>
+  <div class="form-group">
+    <%# f.input_field :file, :as => :file, name: "image[file]",  :multiple => true, :class => "btn btn-file" %>
+
+    <div class="btn btn-file btn-primary fileinput-button btn-sm">
+      <i class="fa fa-upload"></i>
+      <span><%= t "general.add_files" %></span>
+      <%= file_field_tag :name => "image[file]", :multiple => false %>
+      <!-- Style Upload: http://stackoverflow.com/questions/14509449/styling-file-upload-button-for-simple-form-for-with-bootstrap-in-rails-3 -->
+    </div>
+  </div>
+<%# end %>
+</form>
