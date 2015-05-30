@@ -8,11 +8,11 @@ module JqueryPopupUploader::Inputs
       #https://github.com/rails/jbuilder/issues/227
       view = ApplicationController.new.view_context
 
-
       # HTML options id etc
       merged_html_options = merge_wrapper_options(input_html_options, wrapper_options)
-      
 
+      #http://stackoverflow.com/questions/15401199/simple-form-custom-input-with-custom-wrapper
+      html_classes << 'jpu-input-wrapper' #input_html_classes for real hidden input element
 
       # Plugin specific options
       default_options = {
@@ -20,27 +20,38 @@ module JqueryPopupUploader::Inputs
         :preview_size => '160x120',
         :use_default_url => false
       }
+
       input_options = default_options.merge(options) # needs to assign output of merging to a variable that is not called "options"
 
 
       image = object.send(attribute_name)
-      preview_url = image.send(options[:mount_on]).send(options[:preview_version]).send('url')
+      preview_url = image.send(options[:mount_on]).send(:cropped).send(options[:preview_version]).send('url')
       url = image.send(options[:mount_on]).send('url')
 
 
+      merged_html_options['value'] ||= image.id
+      merged_html_options['data-target-url'] ||= '/'+image.class.name.demodulize.underscore.pluralize
+      merged_html_options['data-preview-version'] ||= options[:preview_version]
+      #merged_html_options['data-crop-url'] ||= '/'+image.class.name.demodulize.underscore.pluralize
+      #crop url provided by 
+
+      #attribute_name = attribute_name+'_id'
+      #attribute_name = 'id'
+      #"#{attribute_name}_id"
+
+
       template.content_tag :div, class: 'input-group' do
-        @builder.hidden_field(attribute_name, merged_html_options) +
+        (@builder.hidden_field "#{attribute_name}_id", merged_html_options) +
+        #@builder.hidden_field(attribute_name, merged_html_options) +
         (template.content_tag :div, class: 'edit-area' do
           (template.link_to(url, :class => 'image fancybox', :caption => object.name) do
             template.image_tag(preview_url, size: options[:preview_size])
           end) +
           (template.content_tag :div, class: 'buttons' do
-            template.button_tag('replace', type: 'button', class: "btn btn-primary jpu-replace") +
-            template.button_tag('delete', type: 'button', class: "btn btn-primary jpu-delete")
+            template.button_tag('replace', type: 'button', class: "btn btn-sm btn-primary jpu-replace") +
+            template.button_tag('delete', type: 'button', class: "btn btn-sm btn-primary jpu-delete")
           end)
-        end) +
-        #(action_controller.render_to_string :partial => "jquery_popup_uploader/modal")
-        (view.render(partial: "jquery_popup_uploader/modal"))
+        end)
       end
     end
 

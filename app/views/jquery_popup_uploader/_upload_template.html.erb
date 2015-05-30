@@ -1,8 +1,12 @@
 <%# Maybe move this to a helper: http://stackoverflow.com/questions/18780752/rails-render-partial-in-helper%>
 
-<script id="template-upload-popup" type="text/x-tmpl">
+<%# template-upload seems to be a fixed name that cannot be changed %>
+<%# template-download needs also to be defined %>
+<script id="template-upload" type="text/x-tmpl">
   <div class="upload">
     {%=o.name%}
     <div class="progress progress-striped active"><div class="progress-bar" style="width: 0%"></div></div>
   </div>
+</script>
+<script id="template-download" type="text/x-tmpl">
 </script>

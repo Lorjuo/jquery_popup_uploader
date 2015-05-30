@@ -1,3 +1,5 @@
+# https://github.com/jquery-boilerplate/jquery-boilerplate/blob/master/src/jquery.boilerplate.coffee
+
 # Note that when compiling with coffeescript, the plugin is wrapped in another
 # anonymous function. We do not need to pass in undefined as well, since
 # coffeescript uses (void 0) instead.
@@ -8,7 +10,7 @@ do ($ = jQuery, window, document) ->
   # minified (especially when both are regularly referenced in your plugin).
 
   # Create the defaults once
-  pluginName = "popup_uploader"
+  pluginName = "jquery_popup_uploader"
   defaults =
     property: "value"
 
@@ -22,7 +24,10 @@ do ($ = jQuery, window, document) ->
       @settings = $.extend {}, defaults, options
       @_defaults = defaults
       @_name = pluginName
+      #@element is modal
+      @input_wrappers = $('.jpu-input-wrapper')
       @init()
+      @current_wrapper
 
     init: ->
       # Place initialization logic here
@@ -34,12 +39,15 @@ do ($ = jQuery, window, document) ->
     
     initCallbacks: ->
       plugin = this
-      $(@element).find('.jpu-replace').on "click", ->
+      $(@input_wrappers).find('.jpu-replace').on "click", (event) ->
         console.log("replace button clicked")
         plugin.openModal()
+        plugin.current_wrapper = event.target.closest('.jpu-input-wrapper')
+        target_url = $(plugin.current_wrapper).find('input').data('target-url')
+        $(plugin.element).find('form').attr('action', target_url)
 
     initFileupload: ->
-      $(@element).find('.jpu-fileupload').fileupload
+      $('.jpu-fileupload').fileupload
 
         # Automatically start upload when files have been selected
         autoUpload: true
@@ -51,27 +59,47 @@ do ($ = jQuery, window, document) ->
         # IframeTransport will be automatically used if normal way fails
         forceIframeTransport: false
 
-        # Processing image on client side
-        loadImageMaxFileSize: 25000000 # 25MB
-        imageMaxWidth: 800
-        imageMaxHeight: 800
-        disableImageResize: false
-        process:[
+        # This settings seem to have no effect at the moment, because they get overridden by processQueue
+        #loadImageMaxFileSize: 25000000 # 25MB
+        #imageMaxWidth: 1920
+        #imageMaxHeight: 1920
+        #disableImageResize: false
+        #disableImageMetaDataLoad: false
+        #imageOrientation: true
+        #imageCrop: true
+
+        # BEST SOURCE:
+        # https://github.com/blueimp/jQuery-File-Upload/wiki/Options#file-processing-options
+        # see also the following file for the processing actions: jquery.fileupload-image.js
+        #https://github.com/tors/jquery-fileupload-rails/blob/master/app/assets/javascripts/jquery-fileupload/jquery.fileupload-image.js
+        processQueue: [
           {
-            action: 'load',
-            fileTypes: /^image\/(gif|jpeg|png)$/,
+            action: 'loadImageMetaData'
+            # disableImageHead: '@',
+            # disableExif: '@',
+            # disableExifThumbnail: '@',
+            # disableExifSub: '@',
+            # disableExifGps: '@',
+            # disabled: '@disableImageMetaDataLoad'
+          },
+          {
+            action : 'loadImage',
+            fileTypes : /^image\/(gif|jpeg|png)$/,
             maxFileSize: 25000000 # 25MB
-          },
-          {
-            action: 'resize',
-            maxWidth: 800,
-            maxHeight: 800#,
-            #minWidth: 480,
-            #minHeight: 360
-          },
-          {
-            action: 'save'
+          }, {
+            action : 'resizeImage',
+            maxWidth: 1920,
+            maxHeight: 1920,
+            #crop : true
+            orientation: true
+          }, {
+            action : 'saveImage',
+            type : 'image/jpeg',
+            quality : 1 #A Number between 0 and 1 indicating image quality
           }
+          #{
+          #  action : "setImage"
+          #}
         ]
 
         add: (e, data) ->
@@ -81,12 +109,15 @@ do ($ = jQuery, window, document) ->
               if(file.type.substr(0, file.type.indexOf('/')) != 'image')
                 alert("Please upload a file with the correct format")
               else
+                #$(@element).find("#template_area").hide 'puff', {}, 1000, ->
+                #  $(@element).find("#template_area").html('')
+
                 current_data = $(this)
                 data.process(->
                   return current_data.fileupload('process', data); #call the process function
                 ).done(->
-                  data.context = $($.parseHTML(tmpl("template-upload-popup", file)))
-                  $('.fileupload').append(data.context)
+                  data.context = $($.parseHTML(tmpl("template-upload", file)))
+                  $('.jpu-fileupload').append(data.context)
                   xhr = data.submit();
                   data.context.data('data',{jqXHR: xhr});
                 )
@@ -101,13 +132,13 @@ do ($ = jQuery, window, document) ->
         done: (e, data) ->
           data.context.find('.progress-bar').addClass('progress-bar-success')
           data.context.find('.progress').removeClass('progress-striped active')
-          setTimeout (->
-            data.context.hide()
-          ), 3000
 
         always: (e, data) ->
           data.context.find('.progress').removeClass('progress-striped active')
           data.context.find('.progress-bar').css('width', 100 + '%')
+          setTimeout (->
+            data.context.hide() # hide progress bar
+          ), 3000
         
         fail: (e, data) ->
           data.context.find('.progress-bar').addClass('progress-bar-danger')
@@ -116,7 +147,53 @@ do ($ = jQuery, window, document) ->
           console.log(data)
 
     openModal: ->
-      $(@element).find('.modal').modal()
+      console.log "[image_popup_upload] openModal()"
+      plugin = this
+      $(@element).find("input").val('')
+      $(@element).find("#template_area").html('')
+      $(@element).modal('show')
+      # ensure that callback is only fired once:
+      # http://stackoverflow.com/questions/14969960/jquery-click-events-firing-multiple-times
+      $(@element).find("button.apply").off().bind 'click', ->
+        plugin.applyChanges()
+
+    applyChanges: ->
+      console.log "[image_popup_upload] applyChanges()"
+      imageId = $(@element).find('.image-info').data('image-id')
+      if !imageId
+        return false
+      
+      # Get Attributes
+      crop_x = $(@element).find('input.crop_x').val()
+      crop_y = $(@element).find('input.crop_y').val()
+      crop_w = $(@element).find('input.crop_w').val()
+      crop_h = $(@element).find('input.crop_h').val()
+      crop_url = $(@element).find("#template_area").data('crop-url')
+      preview_version = $(@current_wrapper).find('input').data('preview-version')
+
+      $.ajax(
+        url: crop_url
+        data:
+          'image[file_crop_x]': crop_x
+          'image[file_crop_y]': crop_y
+          'image[file_crop_w]': crop_w
+          'image[file_crop_h]': crop_h
+          'preview_version': preview_version
+      ).success((data) ->
+        $(@element).modal('hide')
+        console.log 'cropping succeeded'
+        console.log 'Sample of data:', data.slice(0, 100)
+        $(@element).modal('hide')
+
+        # set new image id
+        $(@current_wrapper).find('input.image_popup_upload').val(imageId)
+      ).error (data) ->
+        console.log 'cropping failed'
+
+      #TODO: Problem: executed multiple times -> Check
+      #APPLY Preview image
+      #CROPPING
+      #ADJUST BUTTONS edit/replace
 
   # A really lightweight plugin wrapper around the constructor,
   # preventing against multiple instantiations
@@ -126,4 +203,6 @@ do ($ = jQuery, window, document) ->
         $.data @, "plugin_#{pluginName}", new Plugin @, options
 
 $ ->
-  $("div.form-group.image_popup_upload").popup_uploader {}
+  $("#jpu-modal").jquery_popup_uploader {} # seems to work only on one element
+  #new Plugin( $("div.form-group.image_popup_upload"), {} );
+  #myplugin = $.jquery_popup_uploader($('div.form-group.image_popup_upload'))
