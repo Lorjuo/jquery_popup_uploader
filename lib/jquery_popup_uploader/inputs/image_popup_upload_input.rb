@@ -38,7 +38,14 @@ module JqueryPopupUploader::Inputs
       #attribute_name = attribute_name+'_id'
       #attribute_name = 'id'
       #"#{attribute_name}_id"
-
+      
+      # Get Default Urls - used when image gets resetted
+      klass = image.class
+      new_instance = klass.new
+      merged_html_options['data-default-preview-image'] =
+                          new_instance.file.cropped.send(options[:preview_version]).url
+      merged_html_options['data-default-full-image'] =
+                          new_instance.file.url
 
       template.content_tag :div, class: 'input-group' do
         (@builder.hidden_field "#{attribute_name}_id", merged_html_options) +
@@ -48,8 +55,8 @@ module JqueryPopupUploader::Inputs
             template.image_tag(preview_url, size: options[:preview_size])
           end) +
           (template.content_tag :div, class: 'buttons' do
-            template.button_tag('replace', type: 'button', class: "btn btn-sm btn-primary jpu-replace") +
-            template.button_tag('delete', type: 'button', class: "btn btn-sm btn-primary jpu-delete")
+            template.button_tag(I18n.t('general.replace'), type: 'button', class: "btn btn-sm btn-primary jpu-replace") +
+            template.button_tag(I18n.t('general.destroy'), type: 'button', class: "btn btn-sm btn-primary jpu-delete")
           end)
         end)
       end

@@ -39,12 +39,26 @@ do ($ = jQuery, window, document) ->
     
     initCallbacks: ->
       plugin = this
+
+      # Replace
       $(@input_wrappers).find('.jpu-replace').on "click", (event) ->
         console.log("replace button clicked")
         plugin.openModal()
         plugin.current_wrapper = event.target.closest('.jpu-input-wrapper')
         target_url = $(plugin.current_wrapper).find('input').data('target-url')
         $(plugin.element).find('form').attr('action', target_url)
+
+      # Delete
+      $(@input_wrappers).find('.jpu-delete').on "click", (event) ->
+        preview_image = $(plugin.current_wrapper).find('input').data('default-preview-image')
+        full_image = $(plugin.current_wrapper).find('input').data('default-full-image')
+
+        # set preview image
+        $(plugin.current_wrapper).find('div.edit-area img').attr('src', preview_image)
+        $(plugin.current_wrapper).find('div.edit-area a').attr('href', full_image)
+
+        # set new image id
+        $(plugin.current_wrapper).find('input.image_popup_upload').val(0)
 
     initFileupload: ->
       $('.jpu-fileupload').fileupload
@@ -159,6 +173,7 @@ do ($ = jQuery, window, document) ->
 
     applyChanges: ->
       console.log "[image_popup_upload] applyChanges()"
+      plugin = this
       imageId = $(@element).find('.image-info').data('image-id')
       if !imageId
         return false
@@ -171,6 +186,7 @@ do ($ = jQuery, window, document) ->
       crop_url = $(@element).find("#template_area").data('crop-url')
       preview_version = $(@current_wrapper).find('input').data('preview-version')
 
+      $('body').addClass("loading");
       $.ajax(
         url: crop_url
         data:
@@ -180,15 +196,22 @@ do ($ = jQuery, window, document) ->
           'image[file_crop_h]': crop_h
           'preview_version': preview_version
       ).success((data) ->
-        $(@element).modal('hide')
         console.log 'cropping succeeded'
-        console.log 'Sample of data:', data.slice(0, 100)
-        $(@element).modal('hide')
+
+        # set preview image
+        $(plugin.current_wrapper).find('div.edit-area img').attr('src', data.preview_image)
+        $(plugin.current_wrapper).find('div.edit-area a').attr('href', data.full_image)
 
         # set new image id
-        $(@current_wrapper).find('input.image_popup_upload').val(imageId)
-      ).error (data) ->
+        $(plugin.current_wrapper).find('input.image_popup_upload').val(imageId)
+
+        #close modal
+        $(plugin.element).modal('hide')
+
+      ).error((data) ->
         console.log 'cropping failed'
+      ).done ->
+        $('body').removeClass("loading");
 
       #TODO: Problem: executed multiple times -> Check
       #APPLY Preview image
