@@ -25,8 +25,12 @@ module JqueryPopupUploader::Inputs
 
 
       image = object.send(attribute_name)
-      preview_url = image.send(options[:mount_on]).send(:cropped).send(options[:preview_version]).send('url')
-      url = image.send(options[:mount_on]).send('url')
+      if(options[:preview_version].present?)
+        preview_url = image.send(options[:mount_on]).cropped.send(options[:preview_version]).url
+      else # use crop version directly
+        preview_url = image.send(options[:mount_on]).cropped.url
+      end
+      url = image.send(options[:mount_on]).url
 
 
       merged_html_options['value'] ||= image.id
@@ -42,8 +46,15 @@ module JqueryPopupUploader::Inputs
       # Get Default Urls - used when image gets resetted
       klass = image.class
       new_instance = klass.new
-      merged_html_options['data-default-preview-image'] =
+
+      if(options[:preview_version].present?)
+        merged_html_options['data-default-preview-image'] =
                           new_instance.file.cropped.send(options[:preview_version]).url
+      else # use crop version directly
+        merged_html_options['data-default-preview-image'] =
+                          new_instance.file.cropped.url
+      end
+      
       merged_html_options['data-default-full-image'] =
                           new_instance.file.url
 

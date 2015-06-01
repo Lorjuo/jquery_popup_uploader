@@ -27,3 +27,17 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+
+## CUSTOM
+Steps to use this plugin
+
+Create Uploader with cropped version
+
+Add jquery_popup_uploader to form
+Add Utilities on top of form
+
+Enable <image>_id in permitted_attributes
+create empty <image> object in edit and new actions
+exclude <image>_id in new and update methods
+use update_image_associations from ImageAssociationsHelper in update and create method
