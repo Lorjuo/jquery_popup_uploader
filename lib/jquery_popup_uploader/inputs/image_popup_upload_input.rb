@@ -53,7 +53,7 @@ module JqueryPopupUploader::Inputs
         (template.content_tag :div, class: 'edit-area' do
           (template.link_to(url, :class => 'image fancybox', :caption => object.name) do
             template.image_tag(preview_url, size: options[:preview_size])
-          end) +
+          end)+
           (template.content_tag :div, class: 'buttons' do
             template.button_tag(I18n.t('general.replace'), type: 'button', class: "btn btn-sm btn-primary jpu-replace") +
             template.button_tag(I18n.t('general.destroy'), type: 'button', class: "btn btn-sm btn-primary jpu-delete")

@@ -39,6 +39,8 @@ do ($ = jQuery, window, document) ->
     
     initCallbacks: ->
       plugin = this
+      # this line does not work because it is executed before elements are loaded
+      #@current_wrapper = @element.closest('.jpu-input-wrapper')
 
       # Replace
       $(@input_wrappers).find('.jpu-replace').on "click", (event) ->
@@ -50,6 +52,7 @@ do ($ = jQuery, window, document) ->
 
       # Delete
       $(@input_wrappers).find('.jpu-delete').on "click", (event) ->
+        plugin.current_wrapper = event.target.closest('.jpu-input-wrapper')
         preview_image = $(plugin.current_wrapper).find('input').data('default-preview-image')
         full_image = $(plugin.current_wrapper).find('input').data('default-full-image')
 
@@ -209,6 +212,7 @@ do ($ = jQuery, window, document) ->
         $(plugin.element).modal('hide')
 
       ).error((data) ->
+        $('body').removeClass("loading");
         console.log 'cropping failed'
       ).done ->
         $('body').removeClass("loading");
