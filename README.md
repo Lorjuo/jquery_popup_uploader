@@ -38,6 +38,7 @@ Add jquery_popup_uploader to form
 Add Utilities on top of form
 
 Enable <image>_id in permitted_attributes
+Add <image>_id as attribute_accessor in <model>.rb
 create empty <image> object in edit and new actions
 exclude <image>_id in new and update methods
 use update_image_associations from ImageAssociationsHelper in update and create method
