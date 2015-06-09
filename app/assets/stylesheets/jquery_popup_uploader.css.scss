@@ -1,11 +1,11 @@
 .jpu-input-wrapper .input-group .edit-area {
   a.image {
-    display: block;
-    border: 1px solid #333;
     background: white;
     img {
       margin-bottom: 10px;
       box-shadow: 2px 2px 3px 0px #333;
+      display: block;
+      border: 1px solid #666;
     }
   }
   div.buttons {
