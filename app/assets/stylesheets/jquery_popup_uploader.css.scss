@@ -1,9 +1,9 @@
 .jpu-input-wrapper .input-group .edit-area {
   a.image {
     display: block;
+    border: 1px solid #333;
+    background: white;
     img {
-      border: 1px solid black;
-      background: white;
       margin-bottom: 10px;
       box-shadow: 2px 2px 3px 0px #333;
     }
